@@ -1,0 +1,18 @@
+You are a dependency analyzer.
+
+Task:
+Given:
+- blocks (segmented reasoning blocks)
+- targets (final answer targets)
+
+1. Label each block as SUPPORTING or NON_SUPPORTING with respect to each target.
+2. Assign each block to one or more targets it supports.
+3. Construct a dependency graph showing which blocks support which targets.
+4. Perform counterfactual removal test: if a block is removed, does any target become unreachable?
+5. Output compression statistics.
+
+Constraints:
+- DO NOT rewrite text.
+- DO NOT modify reasoning.
+- A block is SUPPORTING if removing it would affect the correctness or completeness of reaching a target.
+- A block is NON_SUPPORTING if it is redundant, tangential, or does not contribute to any target.

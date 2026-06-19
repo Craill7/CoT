@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CoT Compression Output Schema",
+  "description": "统一格式输出：逆向冗余裁剪结果",
+  "type": "object",
+  "properties": {
+    "sample_id": {
+      "type": "string",
+      "description": "样本唯一标识"
+    },
+    "targets": {
+      "type": "array",
+      "description": "提取的最终答案目标列表",
+      "items": {
+        "type": "object",
+        "properties": {
+          "target_id": { "type": "integer" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "blocks": {
+      "type": "array",
+      "description": "分段后的推理块列表",
+      "items": {
+        "type": "object",
+        "properties": {
+          "block_id": { "type": "integer" },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "block_labels": {
+      "type": "array",
+      "description": "每个 block 的标签",
+      "items": {
+        "type": "object",
+        "properties": {
+          "block_id": { "type": "integer" },
+          "type": {
+            "type": "string",
+            "enum": ["SUPPORTING", "NON_SUPPORTING"]
+          },
+          "supports": {
+            "type": "array",
+            "description": "该 block 支持的目标 ID 列表",
+            "items": { "type": "integer" }
+          }
+        },
+        "required": ["block_id", "type", "supports"]
+      }
+    },
+    "dependency_graph": {
+      "type": "array",
+      "description": "block → target 依赖关系图",
+      "items": {
+        "type": "object",
+        "properties": {
+          "block": { "type": "integer" },
+          "target": { "type": "integer" }
+        },
+        "required": ["block", "target"]
+      }
+    },
+    "redundant_blocks": {
+      "type": "array",
+      "description": "被裁剪的冗余 block ID 列表",
+      "items": { "type": "integer" }
+    },
+    "statistics": {
+      "type": "object",
+      "description": "压缩统计信息",
+      "properties": {
+        "num_blocks": { "type": "integer" },
+        "num_supporting": { "type": "integer" },
+        "num_redundant": { "type": "integer" },
+        "compression_ratio": { "type": "number" }
+      },
+      "required": ["num_blocks", "num_supporting", "num_redundant", "compression_ratio"]
+    }
+  },
+  "required": ["sample_id", "targets", "blocks", "block_labels", "dependency_graph", "redundant_blocks", "statistics"]
+}
