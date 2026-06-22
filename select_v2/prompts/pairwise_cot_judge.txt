@@ -81,16 +81,16 @@ Check all that apply. Be strict.
 
 Return only valid JSON:
 
-{
+{{
 "problem_difficulty": "Hard|Medium|Easy",
-"cot_a": {
+"cot_a": {{
 "quality_tags": [],
 "issues": []
-},
-"cot_b": {
+}},
+"cot_b": {{
 "quality_tags": [],
 "issues": []
-},
+}},
 "winner": "a|b",
 "brief_reason": "one short sentence explaining the choice"
-}
+}}
