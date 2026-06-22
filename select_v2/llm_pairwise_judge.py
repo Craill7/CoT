@@ -17,7 +17,7 @@ from .config import VALID_TAGS, VALID_ISSUES, VALID_DIFFICULTY
 
 # ── Config ──────────────────────────────────────────────
 VLLM_URL = "http://127.0.0.1:8000/v1/chat/completions"
-MODEL_NAME = "Qwen/Qwen2.5-32B-Instruct"
+MODEL_NAME = "/ky200t/models/Qwen2.5-32B-Instruct"
 MAX_RETRIES = 3
 REQUEST_TIMEOUT = 120
 PROMPT_FILE = Path(__file__).resolve().parent / "prompts" / "pairwise_cot_judge.txt"
