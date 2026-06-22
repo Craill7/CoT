@@ -1,0 +1,96 @@
+You are evaluating two Chain-of-Thought (CoT) solutions for the same math problem. Your job is to assess reasoning quality and detect redundancy issues. You are NOT asked to judge mathematical correctness — correctness verification is handled separately.
+
+## Input
+
+**Problem:**
+{problem}
+
+**CoT A:** (verified_correct: {verified_a})
+{cot_a}
+
+**CoT B:** (verified_correct: {verified_b})
+{cot_b}
+
+## Evaluation Dimensions
+
+### 1. Problem Difficulty
+Assess the PROBLEM itself (not the solutions):
+- **Hard**: Multi-step reasoning, non-obvious insights, advanced techniques.
+- **Medium**: Moderate complexity, some non-trivial steps.
+- **Easy**: Straightforward calculation or formula application.
+
+### 2. Quality Tags (per CoT)
+Check all that apply. Use empty list [] only for complete nonsense.
+
+- **Deep**: Genuine depth — non-trivial derivations, case analysis, insights beyond surface formula.
+- **Present**: Steps are clearly traceable and well-structured.
+- **Exploratory**: Tries different angles, considers alternatives, discusses approach choices.
+- **Cohesive**: Logically coherent start to finish. No contradictions or lost threads.
+- **Concise**: Low redundancy. Does NOT waste tokens on restatements, re-derivations, or unnecessary re-verification.
+
+### 3. Redundancy Issues (per CoT)
+Check all that apply. Be strict.
+
+- **redundant_restatement**: Same derivation/conclusion repeated with different wording. Solving the same equation twice without adding new information.
+- **redundant_verification**: After reaching a conclusion via forward reasoning, performs unnecessary re-derivation or exhaustive re-confirmation. Minor checks ("let me verify") are fine; full re-work is not.
+- **unnecessary_cross_validation**: The CoT forces additional solution paths or verification steps even when they are not necessary. These extra checks bloat the reasoning without adding meaningful insight.
+- **forced_verification_alignment**: The CoT introduces an alternative verification or solution path that contains errors or contradictions, but then forcibly aligns its result with the first method's answer instead of recognizing the discrepancy. This is a SERIOUS quality issue.
+- **hallucinated_context**: Introduces problem elements, numbers, or constraints not present in the original problem.
+
+## Rules
+
+1. `problem_difficulty` must be one of `"Hard"`, `"Medium"`, or `"Easy"`.
+   It describes the **problem difficulty**, not the difficulty of each CoT.
+
+2. `quality_tags` must be a subset of:
+   `["Deep", "Present", "Exploratory", "Cohesive", "Concise"]`.
+
+   Definitions:
+
+   * `Deep`: contains non-trivial reasoning beyond surface-level formula use.
+   * `Present`: reasoning steps are explicit and traceable.
+   * `Exploratory`: explores alternative paths, checks assumptions, or considers multiple possibilities.
+   * `Cohesive`: reasoning is logically connected and internally consistent.
+   * `Concise`: avoids unnecessary repetition, restatement, or excessive verification.
+
+3. `issues` must be a subset of:
+   `["redundant_restatement", "redundant_verification", "unnecessary_cross_validation", "forced_verification_alignment", "hallucinated_context"]`.
+
+   Definitions:
+
+   * `redundant_restatement`: repeatedly restates the problem or previous steps without adding new reasoning.
+   * `redundant_verification`: performs unnecessary repeated checking or recalculation.
+   * `unnecessary_cross_validation`: forces additional solution paths or verification steps even when they are not necessary. These extra checks bloat the reasoning without adding meaningful insight.
+   * `forced_verification_alignment`: introduces an alternative verification or solution path that contains errors or contradictions, but then forcibly aligns its result with the first method's answer instead of recognizing the discrepancy. This is a SERIOUS quality issue.
+   * `hallucinated_context`: introduces assumptions, conditions, facts, or problem details not supported by the original problem.
+
+   Use an empty list `[]` if the CoT is clean.
+
+4. Winner prioritization:
+   a. `forced_verification_alignment` is near-reject. Prefer the CoT without it unless the other CoT has an even more severe issue.
+   b. `hallucinated_context` is also severe — prefer the CoT without it.
+   c. Prefer the CoT with fewer severe issues, in this severity order:
+   `forced_verification_alignment` > `hallucinated_context` > `redundant_verification` > `redundant_restatement` > `unnecessary_cross_validation`.
+   d. If severity is comparable, prefer the CoT with fewer total issues.
+   e. If still tied, prefer the CoT with more quality tags.
+   f. If still tied, prefer the shorter CoT, but only if it does not omit necessary reasoning steps.
+
+5. Always pick exactly one winner: `"a"` or `"b"`. No ties.
+
+## Output Format
+
+Return only valid JSON:
+
+{
+"problem_difficulty": "Hard|Medium|Easy",
+"cot_a": {
+"quality_tags": [],
+"issues": []
+},
+"cot_b": {
+"quality_tags": [],
+"issues": []
+},
+"winner": "a|b",
+"brief_reason": "one short sentence explaining the choice"
+}
