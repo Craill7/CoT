@@ -25,7 +25,7 @@ from .llm_pairwise_judge import call_judge
 from .scoring import selection_score, pick_winner
 
 # ── Constants ────────────────────────────────────────────
-MAX_CHAR_LIMIT = 12_000       # drop generations longer than this (dead-loop guard)
+MAX_CHAR_LIMIT = None  # disabled — length does not correlate with dead loops
 MIN_LEN_RATIO = 0.5           # exclude CoTs shorter than 0.5 * median_len
 MAX_WORKERS = 4               # concurrent LLM requests
 REQUEST_TIMEOUT = 300          # per-request timeout (seconds)
@@ -67,7 +67,7 @@ def pick_pair(
     # Filter out super-long generations (dead-loop guard)
     valid = [
         (i, g) for i, g in enumerate(generations)
-        if len(g) <= MAX_CHAR_LIMIT
+        if MAX_CHAR_LIMIT is None or len(g) <= MAX_CHAR_LIMIT
     ]
     if len(valid) < 2:
         return None
