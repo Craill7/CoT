@@ -1,0 +1,139 @@
+[
+  {
+    "fixture_id": "shard_3_sample_28",
+    "expected": "rejected_contaminated_or_unclear",
+    "question": "If the six edges of a tetrahedron are all powers of 2, how many distinct edge lengths are possible at most?",
+    "analysis": {
+      "targets": [
+        {
+          "target_id": 0,
+          "type": "unknown",
+          "description": "The final answer is unclear or absent"
+        }
+      ],
+      "blocks": [
+        {
+          "block_id": 0,
+          "type": "narration",
+          "text": "<think></think> You will be given a problem. Please reason step by step."
+        },
+        {
+          "block_id": 1,
+          "type": "setup",
+          "text": "If the six edges of a tetrahedron are all powers of 2..."
+        }
+      ],
+      "block_labels": [
+        {
+          "block_id": 0,
+          "label_subtype": "NARRATION",
+          "keep": false,
+          "supports": []
+        },
+        {
+          "block_id": 1,
+          "label_subtype": "NON_SUPPORTING",
+          "keep": false,
+          "supports": []
+        }
+      ],
+      "dependency_graph": [],
+      "supporting_blocks": [],
+      "quality_flags": ["proof_gap_risk"],
+      "statistics": {
+        "target_coverage": 0.0,
+        "dependency_open": 1
+      }
+    }
+  },
+  {
+    "fixture_id": "shard_0_sample_46",
+    "expected": "open_repairable",
+    "question": "How many acute triangles are needed to form the specified 120-degree isosceles triangle?",
+    "analysis": {
+      "targets": [
+        {
+          "target_id": 0,
+          "type": "single_answer",
+          "description": "7"
+        }
+      ],
+      "blocks": [
+        {
+          "block_id": 0,
+          "type": "narration",
+          "text": "The problem is restated."
+        },
+        {
+          "block_id": 1,
+          "type": "correction",
+          "text": "Several discarded attempts are explored."
+        },
+        {
+          "block_id": 2,
+          "type": "setup",
+          "text": "The geometric setup and coordinates are introduced."
+        },
+        {
+          "block_id": 3,
+          "type": "derivation",
+          "text": "The main derivation reaches 7 but contains a local proof gap."
+        }
+      ],
+      "block_labels": [
+        {
+          "block_id": 0,
+          "label_subtype": "NARRATION",
+          "keep": false,
+          "supports": []
+        },
+        {
+          "block_id": 1,
+          "label_subtype": "SELF_CORRECTION",
+          "keep": false,
+          "supports": []
+        },
+        {
+          "block_id": 2,
+          "label_subtype": "DERIVATION_SUPPORT",
+          "keep": true,
+          "supports": [0]
+        },
+        {
+          "block_id": 3,
+          "label_subtype": "DERIVATION_SUPPORT",
+          "keep": true,
+          "supports": [0]
+        }
+      ],
+      "dependency_graph": [
+        {"block": 2, "target": 0},
+        {"block": 3, "target": 0}
+      ],
+      "supporting_blocks": [2, 3],
+      "quality_flags": ["proof_gap_risk", "dirty_trace_risk"],
+      "statistics": {
+        "target_coverage": 1.0,
+        "dependency_open": 0
+      }
+    },
+    "diagnosis_response": {
+      "block_dependencies": [
+        {"from_block": 2, "to_block": 3, "relation": "derives"}
+      ],
+      "dependency_state": "open",
+      "gaps": [
+        {
+          "gap_id": "g0",
+          "gap_type": "missing_derivation",
+          "upstream_blocks": [2],
+          "downstream_blocks": [3],
+          "target_ids": [0],
+          "missing_claim": "A local geometric derivation between setup and conclusion is absent.",
+          "suggested_action": "rewrite_span",
+          "confidence": 0.8
+        }
+      ]
+    }
+  }
+]

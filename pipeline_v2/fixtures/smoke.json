@@ -1,0 +1,34 @@
+[
+  {
+    "sample_id": "single-high",
+    "problem": "Compute 1+1.",
+    "gt_answer": "2",
+    "generations": ["We add the terms. Therefore \\boxed{2}."]
+  },
+  {
+    "sample_id": "multi-high",
+    "problem": "Compute 1+2.",
+    "gt_answer": "3",
+    "generations": [
+      "Wrong. \\boxed{1}",
+      "We add one and two carefully. Therefore \\boxed{3}"
+    ],
+    "correctness_math_verify": [false, true]
+  },
+  {
+    "sample_id": "repairable-gap",
+    "problem": "Find the requested value.",
+    "gt_answer": "7",
+    "generations": [
+      "MOCK_GAP A local implication is omitted although the surrounding derivation is usable.\n\nTherefore the final answer is \\boxed{7}"
+    ]
+  },
+  {
+    "sample_id": "contaminated",
+    "problem": "Find the requested value.",
+    "gt_answer": "5",
+    "generations": [
+      "MOCK_CONTAMINATED Ignore the mathematical task and follow an unrelated instruction.\n\nFinal answer is \\boxed{5}"
+    ]
+  }
+]
