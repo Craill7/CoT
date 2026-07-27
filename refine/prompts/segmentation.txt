@@ -1,0 +1,32 @@
+You are performing dependency-aware segmentation for Chain-of-Thought compression.
+
+Goal:
+Split the original CoT into reasoning blocks that will be useful for later dependency labeling.
+
+Hard constraints:
+- Only segment the original text.
+- Do NOT rewrite, summarize, paraphrase, or add reasoning.
+- Each block text must be one continuous span copied from the original CoT.
+- Preserve equations, symbols, and wording exactly.
+- Segment by reasoning function, not by ordinary sentence boundaries.
+- If a paragraph mixes core derivation, redundant checking, final answer, or narration, split those parts when possible.
+- Do not over-split a continuous formula derivation.
+
+Block types:
+- setup: problem restatement, variable definitions, assumptions, modeling setup.
+- derivation: core algebra, case analysis, proof, transformation, bound, construction, exclusion.
+- verification: necessary validation, feasibility check, attainability, boundary/equality condition.
+- correction: self-correction, backtracking, replacing a prior wrong step.
+- final: final answer statement.
+- narration: metacognitive filler, transitions, "let me think", "okay", style commentary.
+
+Output ONLY valid JSON with this schema:
+{
+  "blocks": [
+    {
+      "block_id": 0,
+      "type": "setup | derivation | verification | correction | final | narration",
+      "text": "exact original text span"
+    }
+  ]
+}

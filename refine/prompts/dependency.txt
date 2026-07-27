@@ -1,0 +1,60 @@
+You are performing dependency labeling for dependency-oriented CoT compression.
+
+Goal:
+Given the Turn 1 blocks and the extracted final answer targets, decide which blocks should be kept to form a high-quality, low-redundancy CoT skeleton.
+
+This is NOT shortest possible CoT compression.
+Prefer a skeleton with fewer redundant blocks, more key information, and a clear core reasoning chain.
+
+Label subtypes:
+- DERIVATION_SUPPORT: variable definitions, modeling, formula derivation, key algebra, case analysis, necessary proof, upper/lower bound proof, exclusion of other cases.
+- VALIDATION_SUPPORT: necessary validation, such as attainability, construction validity, boundary cases, feasibility, equality conditions, or proof that an extremum can be achieved.
+- FINAL_ANSWER: the canonical final answer block. For the same target, usually keep only one final answer block.
+- REDUNDANT_VERIFICATION: repeated checking such as "let me check again", "this matches", "yes, correct" without new reasoning.
+- SELF_CORRECTION: self-correction, rollback, or modifying an earlier wrong path. If the corrected block itself contains key new reasoning, use DERIVATION_SUPPORT instead.
+- DEAD_END: wrong attempt, failed path, unused branch.
+- NARRATION: filler, transition, metacognition, "Okay", "Let me think", "Maybe", "I think".
+- REPEATED_FINAL: repeated final answer that is not the canonical final answer.
+- NON_SUPPORTING: other content that does not support any target.
+
+Keep rules:
+- DERIVATION_SUPPORT: keep=true.
+- VALIDATION_SUPPORT: keep=true.
+- FINAL_ANSWER: keep=true, but keep only one canonical final block per target when possible.
+- REDUNDANT_VERIFICATION: keep=false.
+- SELF_CORRECTION: default keep=false unless the block contains key corrected reasoning.
+- DEAD_END: keep=false.
+- NARRATION: keep=false.
+- REPEATED_FINAL: keep=false.
+- NON_SUPPORTING: keep=false.
+
+Critical principles:
+1. A block is not supporting merely because it mentions the final answer.
+2. A final summary is kept only if it contains new reasoning or is the only canonical final answer.
+3. If kept text depends on a summary like "based on previous analysis" while the earlier key reasoning is not kept, add summary_only_risk.
+4. For maximum/minimum/smallest/largest/only/all/unique/all-solutions questions, keep construction plus upper/lower bound, uniqueness, or exclusion proof. Do not keep only candidate verification or final summary.
+5. A correct calculation should be removed if it supports no target.
+6. Verification is VALIDATION_SUPPORT only when it proves feasibility, boundary cases, attainability, construction validity, or equality conditions. Ordinary repeated checks are REDUNDANT_VERIFICATION.
+
+Quality flags:
+- summary_only_risk
+- proof_gap_risk
+- repeated_final_risk
+- dirty_trace_risk
+- target_over_split_risk
+- target_uncertain_risk
+- json_repair_risk
+
+Output ONLY valid JSON with this schema:
+{
+  "labels": [
+    {
+      "block_id": 0,
+      "label": "DERIVATION_SUPPORT | VALIDATION_SUPPORT | FINAL_ANSWER | REDUNDANT_VERIFICATION | SELF_CORRECTION | DEAD_END | NARRATION | REPEATED_FINAL | NON_SUPPORTING",
+      "keep": true,
+      "supports": [0],
+      "reason": "short reason"
+    }
+  ],
+  "quality_flags": []
+}

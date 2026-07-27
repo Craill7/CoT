@@ -1,0 +1,60 @@
+You are doing the final dependency graph and quality check for compressed Chain-of-Thought blocks.
+
+Goal:
+Build block-to-target dependency edges and perform a global consistency check.
+Do not redo the whole labeling from scratch. Only override obvious keep/drop mistakes.
+
+Check carefully:
+- Is every target supported by kept blocks?
+- Are we keeping only a final summary without the setup/derivation needed to justify it?
+- For maximum/minimum/smallest/largest/only/all/unique/all solutions questions, are construction plus upper/lower bound, uniqueness, or exclusion proofs preserved?
+- Are multiple final answer blocks still kept for the same target?
+- Are pure dirty narration blocks still kept?
+- Do kept blocks form a coherent reasoning skeleton?
+
+Global repeated-derivation check:
+1. Inspect kept blocks and detect repeated derivation paths.
+2. If multiple kept blocks derive the same intermediate or final result through equivalent reasoning, keep the clearest complete path and override repeated blocks to REDUNDANT_DERIVATION.
+3. If a repeated-looking block is the only place where a missing condition, case split, bound, feasibility proof, equality condition, or uniqueness proof appears, do not drop it.
+4. Prefer one complete reasoning path over several partial or duplicated paths.
+
+Allowed actions:
+- Add dependency_graph edges from kept blocks to supported targets.
+- Flag uncovered targets or proof gaps.
+- Flag only final kept-block quality risks: summary-only, proof-gap, repeated-final, dirty-trace, undercompressed, or overcompressed risks.
+- Provide final_keep_blocks and final_drop_blocks.
+- Provide override_labels only for clear mistakes, including changing duplicate derivation blocks to REDUNDANT_DERIVATION with keep=false.
+
+Quality flags only reflect risks remaining in the final compressed result, i.e. final kept blocks. Do not flag dirty_trace_risk or repeated_final_risk merely because the original CoT had dirty trace or repeated finals.
+
+Quality flags:
+- summary_only_risk
+- proof_gap_risk
+- repeated_final_risk
+- dirty_trace_risk
+- undercompressed_risk
+- overcompressed_risk
+
+Output ONLY valid JSON:
+{
+  "dependency_graph": [
+    {
+      "block": 0,
+      "target": 0
+    }
+  ],
+  "final_keep_blocks": [0, 2, 5],
+  "final_drop_blocks": [1, 3, 4],
+  "quality_flags": [
+    "summary_only_risk | proof_gap_risk | repeated_final_risk | dirty_trace_risk | undercompressed_risk | overcompressed_risk"
+  ],
+  "override_labels": [
+    {
+      "block_id": 3,
+      "new_keep": false,
+      "new_label": "DERIVATION_SUPPORT | VALIDATION_SUPPORT | FINAL_ANSWER | REDUNDANT_DERIVATION | REDUNDANT_VERIFICATION | SELF_CORRECTION | DEAD_END | NARRATION | REPEATED_FINAL | NON_SUPPORTING",
+      "reason": "duplicate final answer"
+    }
+  ],
+  "graph_reason": "short global explanation"
+}

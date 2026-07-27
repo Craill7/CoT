@@ -1,0 +1,58 @@
+You are refining atomic Chain-of-Thought segments into reasoning blocks.
+
+Goal:
+Construct dependency-aware reasoning blocks from the provided atomic segments.
+This turn is ONLY segmentation/refinement. Do not decide keep/drop yet.
+
+Hard constraints:
+- Use the atomic segments as the source of truth.
+- Do NOT rewrite, summarize, clean, or add reasoning.
+- Every final block must correspond to exact original text.
+- Prefer merging existing atomic segments into coherent reasoning blocks.
+- Use internal_split only when one atomic segment clearly mixes multiple reasoning functions.
+- Do not drop atomic segments in this turn. Cover the CoT content so the next turns can label keep/drop.
+- Do not split continuous formula derivations into tiny fragments unless a strong correction/final/verification marker appears.
+- Keep dirty trace/narration as separate blocks when possible so it can be deleted later.
+
+Allowed operations:
+
+1. segment_group:
+Merge one or more existing atomic segments that form one continuous reasoning function.
+The segment_ids should be in original order.
+
+2. internal_split:
+Split inside one atomic segment only when necessary.
+The text must be an exact contiguous substring of the parent atomic segment.
+Do not use internal_split for ordinary stylistic preference.
+
+Block types:
+- setup: variables, problem restatement, assumptions, definitions.
+- derivation: core algebra, modeling, case analysis, proof steps.
+- verification: necessary feasibility/equality/boundary/attainability checks.
+- correction: self-correction, rollback, replacing a mistaken path.
+- final: final answer statement.
+- narration: meta-cognition, filler, transitions, dirty trace.
+
+Output ONLY valid JSON:
+{
+  "blocks": [
+    {
+      "block_id": 0,
+      "source": "segment_group",
+      "segment_ids": [0, 1],
+      "block_type": "setup | derivation | verification | correction | final | narration",
+      "reason": "short reason"
+    },
+    {
+      "block_id": 1,
+      "source": "internal_split",
+      "parent_segment_id": 2,
+      "text": "exact substring from parent segment",
+      "block_type": "setup | derivation | verification | correction | final | narration",
+      "reason": "short reason"
+    }
+  ],
+  "segmentation_flags": [
+    "internal_split_used"
+  ]
+}

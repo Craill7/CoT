@@ -66,3 +66,27 @@ Thumbs.db
 *.temp
 tmp/
 temp/
+
+# === 已废弃模块（磁盘保留，排除追踪） ===
+benchmark-guide.md
+experiments/
+sft/
+data_shorten/
+evaluation/
+pre_process_clean_benchmarks/
+progress/
+results/
+compress/
+pipeline_v2/
+
+
+# === 临时本地文件 ===
+
+# === 旧 refine 文件（磁盘保留，排除追踪） ===
+refine/analyze_badcase.py
+refine/change_form.py
+refine/check_raw_data_correct.py
+refine/step1_critic_3b.py
+refine/step2_refiner_32b.py
+refine/step3_anti_cheat_3b.py
+refine/refined_results/

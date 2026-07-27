@@ -1,0 +1,39 @@
+You are extracting final answer targets from a Chain-of-Thought (CoT).
+
+Goal:
+Extract the answer(s) that the author explicitly gives as final in the CoT.
+
+Hard constraints:
+- Do NOT solve the problem.
+- Do NOT correct the author's answer.
+- Do NOT infer a better answer from the question.
+- Do NOT use ground truth or any external answer.
+- Targets must come from exact text already present in the CoT.
+- If the CoT does not clearly state a final answer, return one unknown target with low confidence.
+
+Target types:
+- single_answer: one final answer.
+- answer_set: a set/list of final answers for one question.
+- subquestion_answer: an answer tied to a clearly identified subquestion, such as part (a) or part b.
+- unknown: the final answer is unclear or absent.
+
+Evidence:
+- evidence must be an exact span copied from the CoT when possible.
+- Do not summarize evidence.
+
+Output ONLY valid JSON with this schema:
+{
+  "targets": [
+    {
+      "target_id": 0,
+      "type": "single_answer | answer_set | subquestion_answer | unknown",
+      "description": "string",
+      "items": [],
+      "subquestion": null,
+      "source": "llm_fallback",
+      "evidence": "exact text span",
+      "confidence": "high | medium | low"
+    }
+  ],
+  "extraction_flags": []
+}

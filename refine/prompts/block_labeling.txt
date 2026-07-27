@@ -1,0 +1,80 @@
+You are labeling reasoning blocks for high-quality Chain-of-Thought compression.
+
+Goal:
+For each block, assign a functional dependency label and decide keep/drop.
+The objective is not the shortest CoT. The objective is a low-redundancy, information-rich reasoning skeleton that preserves the core chain supporting the stated target(s).
+
+Label subtypes:
+
+DERIVATION_SUPPORT:
+Variables, modeling, formula derivation, key algebra, case analysis, necessity proof, upper/lower bound proof, excluding alternatives, or other core reasoning.
+
+VALIDATION_SUPPORT:
+Necessary verification such as attainability, construction validity, boundary validity, equality condition, feasibility, or proof that a candidate actually works.
+Ordinary "let me check again / this matches / yes" is not validation support.
+
+FINAL_ANSWER:
+The canonical final answer block. For the same target, usually keep only one best final answer block.
+
+REDUNDANT_DERIVATION:
+A block repeats, restates, reformats, or gives an equivalent derivation already covered by earlier kept blocks, without introducing any new constraint, equation, case, proof step, bound, feasibility argument, equality condition, or necessary validation.
+
+REDUNDANT_VERIFICATION:
+Repeated checks that introduce no new reasoning.
+
+SELF_CORRECTION:
+Self-correction, rollback, or changing an earlier wrong path.
+If the corrected content itself contains key new reasoning, label it DERIVATION_SUPPORT instead.
+
+DEAD_END:
+Wrong attempt, failed branch, or branch not used by the final reasoning.
+
+NARRATION:
+Filler, transition, meta-cognition, or dirty trace such as Okay, Hmm, Let me think, Maybe, I think.
+
+REPEATED_FINAL:
+A duplicate final answer that is not the canonical final answer block.
+
+NON_SUPPORTING:
+Other content that does not support any target.
+
+Keep rules:
+- DERIVATION_SUPPORT: keep=true.
+- VALIDATION_SUPPORT: keep=true.
+- FINAL_ANSWER: keep=true, but keep only one canonical final answer per target when possible.
+- REDUNDANT_DERIVATION: keep=false.
+- REDUNDANT_VERIFICATION: keep=false.
+- SELF_CORRECTION: keep=false unless it is relabeled as DERIVATION_SUPPORT because it contains key corrected reasoning.
+- DEAD_END: keep=false.
+- NARRATION: keep=false.
+- REPEATED_FINAL: keep=false.
+- NON_SUPPORTING: keep=false.
+
+Important judgment rules:
+- A block is not supporting merely because it mentions the final answer.
+- A final summary is kept only if it contains new reasoning or is the only canonical final answer block.
+- Correct calculations that do not support any target should be dropped.
+- If a block gives a second derivation of the same result and an earlier kept block already provides a complete derivation, label the later block REDUNDANT_DERIVATION unless it adds a new necessary proof obligation.
+- If a block is a formal rewrite of an earlier derivation without new logic, label it REDUNDANT_DERIVATION.
+- If a block introduces an alternative proof that is clearer, shorter, or more complete than the earlier proof, keep the better proof and mark the weaker/repeated one REDUNDANT_DERIVATION.
+- Do not keep multiple equivalent derivation paths unless they support different targets, different cases, or different necessary proof obligations.
+- A block should not be labeled DERIVATION_SUPPORT merely because it contains correct math; it must add necessary reasoning not already preserved.
+- Repeated final answers are dropped by default.
+- Pure narration is dropped by default.
+- Redundant verification is dropped by default.
+
+Quality flags are not the main goal of this turn. Do not flag risks merely because they appear in the original CoT; final quality risks are checked after final kept blocks are selected.
+
+Output ONLY valid JSON:
+{
+  "labels": [
+    {
+      "block_id": 0,
+      "label": "DERIVATION_SUPPORT | VALIDATION_SUPPORT | FINAL_ANSWER | REDUNDANT_DERIVATION | REDUNDANT_VERIFICATION | SELF_CORRECTION | DEAD_END | NARRATION | REPEATED_FINAL | NON_SUPPORTING",
+      "keep": true,
+      "supports": [0],
+      "reason": "short reason"
+    }
+  ],
+  "labeling_flags": []
+}

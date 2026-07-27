@@ -1,0 +1,23 @@
+# ── CoT Pipeline 核心依赖 ──
+# Python 3.12+, CUDA 12.0
+
+# LLM API 客户端
+requests>=2.31
+
+# 数值 & 深度学习
+numpy>=1.26
+torch>=2.10
+transformers>=4.50
+
+# 聚类 (select/)
+scikit-learn>=1.5
+
+# 进度条
+tqdm>=4.66
+
+# 数学判分 (refine/labeler.py 中的 math_verify)
+math_verify
+latex2sympy2_extended
+
+# ── 推理服务 (单独安装) ──
+# vllm>=0.19   # GPU 推理引擎，通过 OpenAI-compatible API 使用
