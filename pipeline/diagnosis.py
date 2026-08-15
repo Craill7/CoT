@@ -40,22 +40,29 @@ def _has_cycle(edges: Sequence[Dict[str, Any]]) -> bool:
     graph: Dict[int, List[int]] = {}
     for edge in edges:
         graph.setdefault(int(edge["from_block"]), []).append(int(edge["to_block"]))
-    visiting: Set[int] = set()
+    rec_stack: Set[int] = set()
     visited: Set[int] = set()
 
-    def visit(node: int) -> bool:
-        if node in visiting:
-            return True
-        if node in visited:
-            return False
-        visiting.add(node)
-        if any(visit(child) for child in graph.get(node, [])):
-            return True
-        visiting.remove(node)
-        visited.add(node)
-        return False
+    for start in graph:
+        if start in visited:
+            continue
+        stack = [(start, False)]  # (node, processed)
+        while stack:
+            node, processed = stack.pop()
+            if processed:
+                rec_stack.discard(node)
+                visited.add(node)
+                continue
+            if node in rec_stack:
+                return True
+            if node in visited:
+                continue
+            rec_stack.add(node)
+            stack.append((node, True))  # mark as processed after children
+            for child in graph.get(node, []):
+                stack.append((child, False))
 
-    return any(visit(node) for node in graph)
+    return False
 
 
 def sanitize_diagnosis(
